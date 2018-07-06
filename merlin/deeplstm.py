@@ -17,12 +17,13 @@ class DeepLSTM(nn.Module):
         self.hidden = self.init_hidden()
     
     def init_hidden(self):
-        return (torch.zeros(1, 1, self.hidden_dim), torch.zeros(1, 1, self.hidden_dim))
+        return (T.zeros(1, 1, self.hidden_dim), T.zeros(1, 1, self.hidden_dim))
     
     def reset_state(self):
         self.hidden = self.init_hidden()
     
     def forward(self, x):
         self.x = x
-        self.y = self.l2(self.l1(self.x))
+        x, self.hidden = self.l1(self.x, self.hidden)
+        self.y = self.l2(x)
         return self.y

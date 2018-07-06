@@ -20,8 +20,8 @@ class Predictor(nn.Module):
         self.predictor.reset_state()
     
     def forward(self, z, a, m):
-        state = T.cat([z, a, m], 1)
-        h = self.predictor(state)
+        state = T.cat([z, a, m], 1).view(-1, 1, Z_DIM+A_DIM+M_DIM*Kr)
+        h = self.predictor(state).view(-1, H_DIM)
         i = self.reader(h)
         k = i[:, :M_DIM*Kr]
         sc = i[:, M_DIM*Kr:]

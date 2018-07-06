@@ -4,6 +4,7 @@
 from datetime import datetime 
 import os
 import gym
+import envs
 
 # --- Flags
 LOGGING = True
@@ -47,3 +48,6 @@ ALPHA_ENTROPY = 1.#0.01
 
 # misc
 EPS = 1e-6
+
+# optimizer
+OPT_NAME = "adam"
