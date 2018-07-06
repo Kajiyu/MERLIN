@@ -27,17 +27,19 @@ def main():
             T += 1
 
             if done:
-                agent(done)
-                agent.backward()
+                loss = agent(done)
+                loss.backward(retain_graph=True)
                 optimizer.step()
+                optimizer.zero_grad()
                 break
             elif (ep_time+1) % TRAIN_INTERVAL == 0:
                 # run additional step for bootstrap
                 a = agent.step(s, r, ep_time)
                 s, r, done, info = ENV.step(a)
-                agent(False)    # enable bootstrap regardless of done
-                agent.backward()
+                loss = agent(False)    # enable bootstrap regardless of done
+                loss.backward(retain_graph=True)
                 optimizer.step()
+                optimizer.zero_grad()
                 agent.reset(done)
                 if done:    # episode sometimes finishes at the bootstrap step
                     break

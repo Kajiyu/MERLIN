@@ -43,7 +43,7 @@ class Policy(nn.Module):
         # avoid "ValueError: sum(pvals[:-1]) > 1.0" in numpy.multinomial
         diff = sum(probs.data[:-1]) - 1
         if diff > 0:
-            probs -= (diff + T.from_numpy(np.finfo(np.float32).epsneg)) / (A_DIM - 1)
+            probs = probs - (diff + T.from_numpy(np.finfo(np.float32).epsneg)) / (A_DIM - 1)
 
         a = T.from_numpy(np.random.multinomial(1, probs.data).astype(np.float32)) # onehot
         return log_pi, a

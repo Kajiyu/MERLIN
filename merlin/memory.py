@@ -40,7 +40,7 @@ class Memory(nn.Module):
     
     def write(self, z, time, debug=False):
         # update usage indicator
-        self.u += T.matmul(Variable(T.from_numpy(np.ones((1, Kr), dtype=np.float32))), self.W_predictor)
+        self.u = self.u + T.matmul(Variable(T.from_numpy(np.ones((1, Kr), dtype=np.float32))), self.W_predictor)
 
         # update writing weights
         prev_v_wr = self.v_wr
@@ -61,8 +61,8 @@ class Memory(nn.Module):
             self.v_ret = GAMMA*self.v_ret + (1-GAMMA)*prev_v_wr
             z_wr = T.cat([z, Variable(T.from_numpy(np.zeros((1, Z_DIM), dtype=np.float32)))], 1)
             z_ret = T.cat([Variable(T.from_numpy(np.zeros((1, Z_DIM), dtype=np.float32))), z], 1)
-            self.M += T.matmul(self.v_wr, z_wr) + T.matmul(self.v_ret, z_ret)
+            self.M = self.M + T.matmul(self.v_wr, z_wr) + T.matmul(self.v_ret, z_ret)
         else:
-            self.M += T.matmul(self.v_wr, z)
+            self.M = self.M + T.matmul(self.v_wr, z)
         if debug:
             return self.M
