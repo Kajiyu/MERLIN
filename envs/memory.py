@@ -12,7 +12,7 @@ import gym.spaces
 
 class Memory(gym.Env):
     def __init__(self):
-        super().__init__()
+        super(Memory, self).__init__()
         self.ROW = 2
         self.COL = 2
         self.NUM_CARD = self.COL*self.ROW    # number of cards
