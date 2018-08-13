@@ -1,5 +1,9 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
+
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import numpy as np
 import torch as T
@@ -46,4 +50,5 @@ class Policy(nn.Module):
             probs = probs - (diff + T.from_numpy(np.finfo(np.float32).epsneg)) / (A_DIM - 1)
 
         a = T.from_numpy(np.random.multinomial(1, probs.data).astype(np.float32)) # onehot
+        print(probs)
         return log_pi, a

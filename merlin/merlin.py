@@ -1,5 +1,9 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
+
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import numpy as np
 import torch as T
@@ -105,6 +109,7 @@ class Merlin(nn.Module):
     
     def _decode_loss(self, o_dec, o, a_dec, a, r_dec, r):
         # WARNING: not taking mean in the paper.
+        # o : Image + velocity
         o_loss = F.mse_loss(o_dec, o)
         a_loss = self._bernoulli_softmax_crossentropy(a_dec, a)
         r_loss = F.mse_loss(r_dec, r) / 2
@@ -162,15 +167,14 @@ class Merlin(nn.Module):
             # A_ += A[i] * log_pi[self.actions[i]==1]
             _t = T.sum(log_pi*T.from_numpy(np.array(self.actions[i]==1).astype("float32"))).view(1)
             A_ = A_ + (A[i] * _t)
-            H = H + T.matmul(T.exp(log_pi), log_pi)
-        self.policy_loss = self.policy_loss - (A_[0] + ALPHA_ENTROPY*H )    # gradient ascend
+            H = H - T.matmul(T.exp(log_pi), log_pi)
+        self.policy_loss = self.policy_loss + (A_[0] + ALPHA_ENTROPY*H )    # gradient ascend
         self.policy_loss = self.policy_loss * ETA_POLICY
 
         # update
         self.mbp_loss_log.append(self.mbp_loss.data)
         self.policy_loss_log.append(self.policy_loss.data)
-        print("mbp loss: ", self.mbp_loss)
-        print("policy loss: ", self.policy_loss)
+        print("(mbp loss, policy loss): ", self.mbp_loss, self.policy_loss)
         return self.mbp_loss + self.policy_loss
     
     def backward(self):
